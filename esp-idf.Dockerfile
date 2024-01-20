@@ -1,7 +1,9 @@
 FROM debian:10.9-slim
 
-RUN apt-get update -y && apt-get install -y python3 python3-pip \
-    python3-venv python3-setuptools cmake git curl wget libusb-1.0.0-dev minicom xxd
+RUN apt-get update -y && \
+    apt-get install -y --fix-missing git curl wget \
+    neovim python3 python3-dev python3-venv python3-pip minicom \
+    build-essential cmake libusb-1.0.0 zsh xxd
 
 WORKDIR /esp-idf
 
@@ -13,4 +15,10 @@ WORKDIR /app
 
 COPY ./entrypoint.sh /app/
 
-ENTRYPOINT [ "/app/entrypoint.sh" ]
+RUN chmod +x /app/entrypoint.sh
+
+RUN chsh -s $(which zsh) && \
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" && \
+    zsh
+
+ENTRYPOINT [ "/app/entrypoint.sh" ]`
